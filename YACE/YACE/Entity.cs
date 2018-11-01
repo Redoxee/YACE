@@ -1,6 +1,0 @@
-﻿namespace YACE
-{
-    interface Entity
-    {
-    }
-}
