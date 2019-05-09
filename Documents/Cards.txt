@@ -1,0 +1,22 @@
+{
+    "CardName" : "AttackSpell",
+
+    "PlayerSelect"
+    {
+        "Name" : "SelectedTarget",
+        "Prerequisit" : 
+        [
+            "Tag" : "Attackable",
+            "Owner" : "Adversary",
+        ],
+    }
+
+    "OnPlay" : [
+        {
+            "Type" : "AffectValue",
+            "Target" : "SelectedTarget",
+            "ValueName" : "Health",
+            "ValueDelta" : -5,
+        },
+    ],
+}

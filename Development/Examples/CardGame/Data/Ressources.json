@@ -1,0 +1,11 @@
+﻿{
+	Mana : {
+		BaseValue : 0,
+		Range {Min : 0, Max 100}
+		ConsumeOnUse : True,
+		PlayerBound : true,
+		ResetOn{
+			"EndTurn",
+		}
+	}
+}
