@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using YACE;
 
 namespace CardGame
@@ -15,22 +17,34 @@ namespace CardGame
 
         static void Main(string[] args)
         {
-            YACEParameters parameters;
-            parameters.RessourceDefinitions = new RessourceDefinition[] {
-                new RessourceDefinition {
-                    Name = "Money",
-                    IsBoundToPlayer = false,
-                    BaseValue = 100,
-                    ConsumeOnUse = true
-                },
 
-                new RessourceDefinition {
-                    Name = "BankAcount",
-                    IsBoundToPlayer = true,
-                    BaseValue = 0,
-                    ConsumeOnUse = true
+            System.Collections.Generic.List<ResourceDefinition> resourceList = new List<ResourceDefinition>();
+            System.Diagnostics.Debug.Assert(args.Length > 0);
+            string resourceFilePath = args[0];
+            using (TextReader reader = File.OpenText(resourceFilePath))
+            {
+                string content = reader.ReadToEnd();
+
+                Newtonsoft.Json.Linq.JObject root = Newtonsoft.Json.Linq.JObject.Parse(content);
+                
+                foreach (var resourceObj in root)
+                {
+                    System.Console.Out.WriteLine(resourceObj.ToString());
+                    ResourceDefinition resource = new ResourceDefinition();
+                    resource.Name = resourceObj.Key;
+
+                    resource.ConsumeOnUse = resourceObj.Value.Value<bool?>("ConsumeOnUse") ?? false;
+                    resource.IsBoundToPlayer = resourceObj.Value.Value<bool?>("PlayerBound") ?? false;
+                    resource.BaseValue = resourceObj.Value.Value<int?>("BaseValue") ?? 0;
+                    resource.MinValue = resourceObj.Value.Value<int?>("MinValue") ?? int.MinValue;
+                    resource.MaxValue = resourceObj.Value.Value<int?>("MaxValue") ?? int.MaxValue;
+                    resourceList.Add(resource);
                 }
-            };
+
+            }
+
+            YACEParameters parameters;
+            parameters.ResourceDefinitions = resourceList.ToArray();
 
             Program.Yace = new YACE.YACE(parameters);
             YACE.YACE yace = Program.Yace;

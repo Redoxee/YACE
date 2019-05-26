@@ -1,0 +1,12 @@
+﻿{
+  "Mana": {
+    "BaseValue": 0,
+    "MinValue": 0,
+    "MaxValue": 100,
+    "ConsumeOnUse": true,
+    "PlayerBound": true,
+    "ResetOn": [
+      "EndTurn"
+    ]
+  }
+}

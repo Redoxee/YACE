@@ -9,7 +9,7 @@
 
         public YACE(YACEParameters parameters)
         {
-            System.Diagnostics.Debug.Assert(parameters.RessourceDefinitions != null, "Provide at least one ressource");
+            System.Diagnostics.Debug.Assert(parameters.ResourceDefinitions != null, "Provide at least one ressource");
 
             Context = new Context
             {
@@ -27,7 +27,7 @@
             int globalRessourceCount = 0;
             int playerRessourceCount = 0;
 
-            foreach (RessourceDefinition ressourceDefinition in parameters.RessourceDefinitions)
+            foreach (ResourceDefinition ressourceDefinition in parameters.ResourceDefinitions)
             {
                 if (ressourceDefinition.IsBoundToPlayer)
                 {
@@ -45,7 +45,7 @@
 
             int globalCounter = 0;
             int playerCounter = 0;
-            foreach (RessourceDefinition ressourceDefinition in parameters.RessourceDefinitions)
+            foreach (ResourceDefinition ressourceDefinition in parameters.ResourceDefinitions)
             {
                 if (ressourceDefinition.IsBoundToPlayer)
                 {
@@ -70,7 +70,7 @@
         {
             if (globalRessourceIndexes.ContainsKey(currency))
             {
-                Context.GlobalRessource[globalRessourceIndexes[currency]].Value += delta;
+                Context.GlobalRessource[globalRessourceIndexes[currency]].Value = Context.GlobalRessource[globalRessourceIndexes[currency]].Value + delta;
                 return true;
             }
             else if (playerRessourceIndexes.ContainsKey(currency))
@@ -85,10 +85,10 @@
 
     public struct YACEParameters
     {
-        public RessourceDefinition[] RessourceDefinitions;
+        public ResourceDefinition[] ResourceDefinitions;
     }
 
-    public struct RessourceDefinition
+    public struct ResourceDefinition
     {
         public string Name;
         public int MinValue;
@@ -103,7 +103,7 @@
 
     public class Ressource
     {
-        public RessourceDefinition Definition;
+        public ResourceDefinition Definition;
         public int Value;
 
         public override string ToString()
