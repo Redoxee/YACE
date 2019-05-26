@@ -1,18 +1,28 @@
-﻿using System.Collections.Generic;
-
-namespace YACE
+﻿namespace YACE
 {
     public class YACE
     {
         public Context Context;
 
+        private readonly System.Collections.Generic.Dictionary<string, int> globalRessourceIndexes = new System.Collections.Generic.Dictionary<string, int>();
+        private readonly System.Collections.Generic.Dictionary<string, int> playerRessourceIndexes = new System.Collections.Generic.Dictionary<string, int>();
+
         public YACE(YACEParameters parameters)
         {
             System.Diagnostics.Debug.Assert(parameters.RessourceDefinitions != null, "Provide at least one ressource");
 
-            Context.Players = new PlayerContext[2];
-            Context.CurrentPlayer = 0;
+            Context = new Context
+            {
+                Players = new PlayerContext[]
+                {
+                    new PlayerContext(),
+                    new PlayerContext()
+                },
+                CurrentPlayer = 0
+            };
 
+            this.globalRessourceIndexes.Clear();
+            this.playerRessourceIndexes.Clear();
 
             int globalRessourceCount = 0;
             int playerRessourceCount = 0;
@@ -21,11 +31,11 @@ namespace YACE
             {
                 if (ressourceDefinition.IsBoundToPlayer)
                 {
-                    playerRessourceCount++;
+                    playerRessourceIndexes[ressourceDefinition.Name] = playerRessourceCount++;
                 }
                 else
                 {
-                    globalRessourceCount++;
+                    globalRessourceIndexes[ressourceDefinition.Name] = globalRessourceCount++;
                 }
             }
 
@@ -50,6 +60,27 @@ namespace YACE
                 }
             }
         }
+
+        public void EndPlayerTurn()
+        {
+            Context.CurrentPlayer = (Context.CurrentPlayer + 1) % 2;
+        }
+
+        public bool AlterCurrency(string currency, int delta)
+        {
+            if (globalRessourceIndexes.ContainsKey(currency))
+            {
+                Context.GlobalRessource[globalRessourceIndexes[currency]].Value += delta;
+                return true;
+            }
+            else if (playerRessourceIndexes.ContainsKey(currency))
+            {
+                Context.Players[Context.CurrentPlayer].Ressources[playerRessourceIndexes[currency]].Value += delta;
+                return true;
+            }
+
+            return false;
+        }
     }
 
     public struct YACEParameters
@@ -70,7 +101,7 @@ namespace YACE
         public string[] ResetOnPhases;
     }
 
-    public struct Ressource
+    public class Ressource
     {
         public RessourceDefinition Definition;
         public int Value;
@@ -85,7 +116,7 @@ namespace YACE
         }
     }
 
-    public struct Context
+    public class Context
     {
         public PlayerContext[] Players;
         public int CurrentPlayer;
@@ -117,7 +148,7 @@ namespace YACE
         }
     }
 
-    public struct PlayerContext
+    public class PlayerContext
     {
         public Ressource[] Ressources;
 
