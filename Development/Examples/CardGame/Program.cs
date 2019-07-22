@@ -29,7 +29,6 @@ namespace CardGame
                 
                 foreach (var resourceObj in root)
                 {
-                    System.Console.Out.WriteLine(resourceObj.ToString());
                     ResourceDefinition resource = new ResourceDefinition();
                     resource.Name = resourceObj.Key;
 

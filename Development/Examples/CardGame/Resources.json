@@ -8,5 +8,16 @@
     "ResetOn": [
       "EndTurn"
     ]
+  },
+
+  "Money": {
+    "BaseValue": 100,
+    "MinValue": 0,
+    "MaxValue": 0,
+    "ConsumeOnUse": true,
+    "PlayerBound": true,
+    "ResetOn": [
+      "EndTurn"
+    ]
   }
 }
