@@ -12,7 +12,7 @@ namespace AMG.Entity
         private static List<Entity> all;
         private static Dictionary<uint, Entity> allDictionaty;
 
-        private static Dictionary<int, HashSet<uint>> tagPools;
+        private static Dictionary<Tag, HashSet<uint>> tagPools;
 
         static EntitySystem()
         {
@@ -28,26 +28,26 @@ namespace AMG.Entity
             allDictionaty[id] = entity;
         }
 
-        internal static void RegisterTag(int tag, Entity target)
+        internal static void RegisterTag(Tag tag, Entity target)
         {
             tagPools[tag].Add(target.Id);
         }
 
-        internal static void UnregisterTag(int tag, Entity target)
+        internal static void UnregisterTag(Tag tag, Entity target)
         {
             tagPools[tag].Remove(target.Id);
         }
 
-        public static void Initialize(int[] allTags)
+        public static void Initialize(Tag[] allTags)
         {
             tagPools.Clear();
-            foreach (int tag in allTags)
+            foreach (Tag tag in allTags)
             {
                 tagPools[tag] = new HashSet<uint>();
             }
         }
 
-        public static EntityCollection Select(int tag)
+        public static EntityCollection Select(Tag tag)
         {
             return new EntityCollection(tagPools[tag]);
         }
@@ -73,7 +73,7 @@ namespace AMG.Entity
                 return this.GetEnumerator();
             }
 
-            public EntityCollection Select(int tag)
+            public EntityCollection Select(Tag tag)
             {
                 HashSet<uint> intersect = new HashSet<uint>(this.ids);
                 intersect.IntersectWith(EntitySystem.tagPools[tag]);
