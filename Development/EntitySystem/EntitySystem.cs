@@ -1,5 +1,5 @@
 ﻿
-namespace AMG.Framework
+namespace AMG.Entity
 {
     using System;
     using System.Collections;

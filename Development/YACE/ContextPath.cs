@@ -5,10 +5,12 @@
     public struct ContextPath
     {
         public PathNode[] PathNodes;
-
+        
         public IEnumerable Evaluate(ITaggableHolder root)
         {
-            for(int nodeIndex = 0; nodeIndex < this.PathNodes.Length; ++nodeIndex)
+            PathNode currentNode = this.PathNodes[0];
+            
+            for (int nodeIndex = 0; nodeIndex < this.PathNodes.Length; ++nodeIndex)
             yield return null;
         }
     }
