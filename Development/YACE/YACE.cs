@@ -166,4 +166,19 @@
             return builder.ToString();
         }
     }
+
+    public class CardDefinition
+    {
+    }
+
+    public class CardInstance
+    {
+        public CardDefinition Definition;
+    }
+
+    public class Zone
+    {
+        public string Name = string.Empty;
+
+    }
 }

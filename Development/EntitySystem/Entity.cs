@@ -1,4 +1,4 @@
-﻿namespace AMG.Framework
+﻿namespace AMG.Entity
 {
     using System.Collections.Generic;
 
@@ -10,23 +10,25 @@
             internal set;
         }
 
-        protected HashSet<int> Tags;
+        protected HashSet<Tag> Tags;
 
         public Entity()
         {
             EntitySystem.Register(this);
         }
 
-        public void AddTag(int tag)
+        public void AddTag(string name)
         {
+            Tag tag = new Tag { Name = name };
             this.Tags.Add(tag);
             EntitySystem.RegisterTag(tag, this);
         }
 
-        public void RemoveTag(int tag)
+        public void RemoveTag(string tagName)
         {
-            this.Tags.Remove(tag);
-            EntitySystem.UnregisterTag(tag, this);
+            Tag tempTag = new Tag { Name = tagName };
+            this.Tags.Remove(tempTag);
+            EntitySystem.UnregisterTag(tempTag, this);
         }
     }
 }
