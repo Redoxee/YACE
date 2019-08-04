@@ -1,11 +1,16 @@
 ﻿namespace YACE
 {
+    using AMG.Entity;
+    using System.Collections.Generic;
     public class YACE
     {
         public Context Context;
 
-        private readonly System.Collections.Generic.Dictionary<string, int> globalRessourceIndexes = new System.Collections.Generic.Dictionary<string, int>();
-        private readonly System.Collections.Generic.Dictionary<string, int> playerRessourceIndexes = new System.Collections.Generic.Dictionary<string, int>();
+        private readonly Dictionary<string, int> globalRessourceIndexes = new Dictionary<string, int>();
+        private readonly Dictionary<string, int> playerRessourceIndexes = new Dictionary<string, int>();
+
+        private readonly Dictionary<string, int> playerZoneIndexes = new Dictionary<string, int>();
+        private readonly Dictionary<string, int> globalZoneIndexes = new Dictionary<string, int>();
 
         public YACE(YACEParameters parameters)
         {
@@ -27,36 +32,79 @@
             int globalRessourceCount = 0;
             int playerRessourceCount = 0;
 
-            foreach (ResourceDefinition ressourceDefinition in parameters.ResourceDefinitions)
+            if (parameters.ResourceDefinitions != null)
             {
-                if (ressourceDefinition.IsBoundToPlayer)
+                foreach (ResourceDefinition ressourceDefinition in parameters.ResourceDefinitions)
                 {
-                    playerRessourceIndexes[ressourceDefinition.Name] = playerRessourceCount++;
+                    if (ressourceDefinition.IsPlayerBound)
+                    {
+                        playerRessourceIndexes[ressourceDefinition.Name] = playerRessourceCount++;
+                    }
+                    else
+                    {
+                        globalRessourceIndexes[ressourceDefinition.Name] = globalRessourceCount++;
+                    }
                 }
-                else
+
+                Context.GlobalRessource = new Ressource[globalRessourceCount];
+                Context.Players[0].Ressources = new Ressource[playerRessourceCount];
+                Context.Players[1].Ressources = new Ressource[playerRessourceCount];
+
+                int globalCounter = 0;
+                int playerCounter = 0;
+                foreach (ResourceDefinition ressourceDefinition in parameters.ResourceDefinitions)
                 {
-                    globalRessourceIndexes[ressourceDefinition.Name] = globalRessourceCount++;
+                    if (ressourceDefinition.IsPlayerBound)
+                    {
+                        Context.Players[0].Ressources[playerCounter] = new Ressource { Definition = ressourceDefinition, Value = ressourceDefinition.BaseValue };
+                        Context.Players[1].Ressources[playerCounter] = new Ressource { Definition = ressourceDefinition, Value = ressourceDefinition.BaseValue };
+                        playerCounter++;
+                    }
+                    else
+                    {
+                        Context.GlobalRessource[globalCounter] = new Ressource { Definition = ressourceDefinition, Value = ressourceDefinition.BaseValue };
+                        globalCounter++;
+                    }
                 }
             }
 
-            Context.GlobalRessource = new Ressource[globalRessourceCount];
-            Context.Players[0].Ressources = new Ressource[playerRessourceCount];
-            Context.Players[1].Ressources = new Ressource[playerRessourceCount];
 
-            int globalCounter = 0;
-            int playerCounter = 0;
-            foreach (ResourceDefinition ressourceDefinition in parameters.ResourceDefinitions)
+            if (parameters.ZoneDefinitions != null)
             {
-                if (ressourceDefinition.IsBoundToPlayer)
+                int nbGlobalZones = 0;
+                int nbPlayerZones = 0;
+                for (int i = 0; i < parameters.ZoneDefinitions.Length; ++i)
                 {
-                    Context.Players[0].Ressources[playerCounter] = new Ressource { Definition = ressourceDefinition, Value = ressourceDefinition.BaseValue };
-                    Context.Players[1].Ressources[playerCounter] = new Ressource { Definition = ressourceDefinition, Value = ressourceDefinition.BaseValue };
-                    playerCounter++;
+                    if (parameters.ZoneDefinitions[i].IsPlayerBound)
+                    {
+                        playerZoneIndexes[parameters.ZoneDefinitions[i].Name] = nbPlayerZones++;
+                    }
+                    else
+                    {
+                        globalZoneIndexes[parameters.ZoneDefinitions[i].Name] = nbGlobalZones++;
+                    }
                 }
-                else
+
+                Context.GlobalZones = new Zone[nbGlobalZones];
+                Context.Players[0].Zones = new Zone[nbPlayerZones];
+                Context.Players[1].Zones = new Zone[nbPlayerZones];
+
+
+                int playerCounter = 0;
+                int globalCounter = 0;
+                foreach (ZoneDefinition zoneDefinition in parameters.ZoneDefinitions)
                 {
-                    Context.GlobalRessource[globalCounter] = new Ressource { Definition = ressourceDefinition, Value = ressourceDefinition.BaseValue };
-                    globalCounter++;
+                    if (zoneDefinition.IsPlayerBound)
+                    {
+                        Context.Players[0].Zones[playerCounter] = new Zone { Name = zoneDefinition.Name };
+                        Context.Players[1].Zones[playerCounter] = new Zone { Name = zoneDefinition.Name };
+                        playerCounter++;
+                    }
+                    else
+                    {
+                        Context.GlobalZones[globalCounter] = new Zone { Name = zoneDefinition.Name };
+                        globalCounter++;
+                    }
                 }
             }
         }
@@ -86,6 +134,7 @@
     public struct YACEParameters
     {
         public ResourceDefinition[] ResourceDefinitions;
+        public ZoneDefinition[] ZoneDefinitions;
     }
 
     public struct ResourceDefinition
@@ -95,7 +144,7 @@
         public int MaxValue;
         public int BaseValue;
 
-        public bool IsBoundToPlayer;
+        public bool IsPlayerBound;
         public bool ConsumeOnUse;
 
         public string[] ResetOnPhases;
@@ -116,11 +165,19 @@
         }
     }
 
+    public struct ZoneDefinition
+    {
+        public string Name;
+        public bool IsPlayerBound;
+        public bool IsOredered;
+    }
+
     public class Context
     {
         public PlayerContext[] Players;
         public int CurrentPlayer;
         public Ressource[] GlobalRessource;
+        public Zone[] GlobalZones;
 
         public override string ToString()
         {
@@ -151,6 +208,7 @@
     public class PlayerContext
     {
         public Ressource[] Ressources;
+        public Zone[] Zones;
 
         public override string ToString()
         {
@@ -171,7 +229,7 @@
     {
     }
 
-    public class CardInstance
+    public class CardInstance : Entity
     {
         public CardDefinition Definition;
     }
@@ -179,6 +237,6 @@
     public class Zone
     {
         public string Name = string.Empty;
-
+        public List<CardInstance> Cards = new List<CardInstance>();
     }
 }
