@@ -10,14 +10,15 @@ namespace AMG.Entity
         private static uint NextId = 1;
 
         private static List<Entity> all;
-        private static Dictionary<uint, Entity> allDictionaty;
+        private static Dictionary<uint, Entity> allEntities;
 
-        private static Dictionary<Tag, HashSet<uint>> tagPools;
+        private static Dictionary<string, HashSet<uint>> tagPools;
 
         static EntitySystem()
         {
             all = new List<Entity>();
-            allDictionaty = new Dictionary<uint, Entity>();
+            allEntities = new Dictionary<uint, Entity>();
+            tagPools = new Dictionary<string, HashSet<uint>>();
         }
 
         internal static void Register(Entity entity)
@@ -25,30 +26,37 @@ namespace AMG.Entity
             uint id = NextId++;
             entity.Id = id;
             all.Add(entity);
-            allDictionaty[id] = entity;
+            allEntities[id] = entity;
         }
 
-        internal static void RegisterTag(Tag tag, Entity target)
+        internal static void RegisterTag(string tag, Entity target)
         {
+            if (!tagPools.ContainsKey(tag))
+            {
+                tagPools.Add(tag, new HashSet<uint>());
+            }
+
             tagPools[tag].Add(target.Id);
         }
 
-        internal static void UnregisterTag(Tag tag, Entity target)
+        internal static void UnregisterTag(string tag, Entity target)
         {
+            if (!tagPools.ContainsKey(tag))
+            {
+                tagPools.Add(tag, new HashSet<uint>());
+            }
+
             tagPools[tag].Remove(target.Id);
         }
-
-        public static void Initialize(Tag[] allTags)
+        
+        public static EntityCollection Select(string tag)
         {
-            tagPools.Clear();
-            foreach (Tag tag in allTags)
+
+            if (!tagPools.ContainsKey(tag))
             {
-                tagPools[tag] = new HashSet<uint>();
+                tagPools.Add(tag, new HashSet<uint>());
             }
-        }
 
-        public static EntityCollection Select(Tag tag)
-        {
             return new EntityCollection(tagPools[tag]);
         }
 
@@ -64,7 +72,7 @@ namespace AMG.Entity
             {
                 foreach (uint id in this.ids)
                 {
-                    yield return EntitySystem.allDictionaty[id];
+                    yield return EntitySystem.allEntities[id];
                 }
             }
 
@@ -73,10 +81,10 @@ namespace AMG.Entity
                 return this.GetEnumerator();
             }
 
-            public EntityCollection Select(Tag tag)
+            public EntityCollection Select(string tag)
             {
                 HashSet<uint> intersect = new HashSet<uint>(this.ids);
-                intersect.IntersectWith(EntitySystem.tagPools[tag]);
+                intersect.IntersectWith(EntitySystem.Select(tag).ids);
                 return new EntityCollection(intersect);
             }
         }

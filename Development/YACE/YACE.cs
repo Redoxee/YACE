@@ -1,7 +1,10 @@
 ﻿namespace YACE
 {
     using AMG.Entity;
+    using System;
+    using System.Text;
     using System.Collections.Generic;
+
     public class YACE
     {
         public Context Context;
@@ -15,6 +18,8 @@
         public YACE(YACEParameters parameters)
         {
             System.Diagnostics.Debug.Assert(parameters.ResourceDefinitions != null, "Provide at least one ressource");
+
+            
 
             Context = new Context
             {
@@ -96,13 +101,13 @@
                 {
                     if (zoneDefinition.IsPlayerBound)
                     {
-                        Context.Players[0].Zones[playerCounter] = new Zone { Name = zoneDefinition.Name };
-                        Context.Players[1].Zones[playerCounter] = new Zone { Name = zoneDefinition.Name };
+                        Context.Players[0].Zones[playerCounter] = new Zone { Name = zoneDefinition.Name, ZoneDefinition = zoneDefinition };
+                        Context.Players[1].Zones[playerCounter] = new Zone { Name = zoneDefinition.Name, ZoneDefinition = zoneDefinition };
                         playerCounter++;
                     }
                     else
                     {
-                        Context.GlobalZones[globalCounter] = new Zone { Name = zoneDefinition.Name };
+                        Context.GlobalZones[globalCounter] = new Zone { Name = zoneDefinition.Name, ZoneDefinition = zoneDefinition };
                         globalCounter++;
                     }
                 }
@@ -112,6 +117,64 @@
         public void EndPlayerTurn()
         {
             Context.CurrentPlayer = (Context.CurrentPlayer + 1) % 2;
+        }
+
+        public void SetCardToZone(CardInstance card, string zoneName, PlayerIndex playerIndex = PlayerIndex.Current)
+        {
+            Zone zone = this.GetZone(zoneName, playerIndex);
+
+            if (zone == null)
+            {
+                return;
+            }
+
+            if (zone == card.Zone)
+            {
+                return;
+            }
+
+            // Removing the precedent zone.
+            if (card.Zone != null)
+            {
+                card.Zone.Cards.Remove(card);
+                card.RemoveTag(card.Zone.Name);
+                card.Zone = null;
+            }
+
+            zone.Cards.Add(card);
+            card.AddTag(zoneName);
+            card.Zone = zone;
+        }
+
+        public void ShuffleZone(string zoneName, PlayerIndex playerIndex = PlayerIndex.Current)
+        {
+            Zone zone = this.GetZone(zoneName, playerIndex);
+            int nbCards = zone.Cards.Count;
+
+            Random random = new Random();
+
+            for (int i = 0; i < nbCards - 1; ++i)
+            {
+                int newIndex = random.Next(i, nbCards);
+                CardInstance swap = zone.Cards[newIndex];
+                zone.Cards[newIndex] = zone.Cards[i];
+                zone.Cards[i] = swap;
+            }
+        }
+
+        private Zone GetZone(string zoneName, PlayerIndex playerIndex = PlayerIndex.Current)
+        {
+            Zone zone = null;
+            if (this.globalZoneIndexes.ContainsKey(zoneName))
+            {
+                zone = this.Context.GlobalZones[this.globalZoneIndexes[zoneName]];
+            }
+            else if (this.playerZoneIndexes.ContainsKey(zoneName))
+            {
+                zone = this.Context.Players[this.Context.GetPlayerIndex(playerIndex)].Zones[this.playerZoneIndexes[zoneName]];
+            }
+
+            return zone;
         }
 
         public bool AlterCurrency(string currency, int delta)
@@ -179,6 +242,11 @@
         public Ressource[] GlobalRessource;
         public Zone[] GlobalZones;
 
+        public int GetPlayerIndex(PlayerIndex playerIndex)
+        {
+            return (this.CurrentPlayer + (int)playerIndex) % 2;
+        }
+
         public override string ToString()
         {
             System.Text.StringBuilder builder = new System.Text.StringBuilder();
@@ -195,9 +263,16 @@
                 builder.Append(player.ToString()).Append(", ");
             }
 
+            builder.Append("Ressources [");
             foreach(Ressource ressource in GlobalRessource)
             {
                 builder.Append(ressource.ToString()).Append(", ");
+            }
+            builder.Append("], Zones");
+
+            foreach (Zone zone in this.GlobalZones)
+            {
+                builder.Append(zone.ToString()).Append(",");
             }
 
             builder.Append("]");
@@ -214,10 +289,17 @@
         {
             System.Text.StringBuilder builder = new System.Text.StringBuilder();
 
-            builder.Append("Player [");
+            builder.Append("Player [ Ressources : [");
             foreach (Ressource ressource in Ressources)
             {
                 builder.Append(ressource.ToString()).Append(", ");
+            }
+
+            builder.Append("], Zones [");
+
+            foreach (Zone zone in this.Zones)
+            {
+                builder.Append(zone.ToString()).Append(",");
             }
 
             builder.Append("]");
@@ -227,16 +309,46 @@
 
     public class CardDefinition
     {
+        public string Name = string.Empty;
     }
 
     public class CardInstance : Entity
     {
         public CardDefinition Definition;
+        internal Zone Zone;
+
+        public CardInstance(CardDefinition definition)
+        {
+            this.Definition = definition;
+        }
     }
 
     public class Zone
     {
         public string Name = string.Empty;
         public List<CardInstance> Cards = new List<CardInstance>();
+        public ZoneDefinition ZoneDefinition;
+
+        public override string ToString()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+
+            stringBuilder.Append(Name).Append(" : [");
+
+            foreach (CardInstance card in this.Cards)
+            {
+                stringBuilder.Append(card.Definition.Name).Append("(").Append(card.GetTagsString()).Append(")");
+            }
+
+            stringBuilder.Append("]");
+
+            return stringBuilder.ToString();
+        }
+    }
+
+    public enum PlayerIndex : byte
+    {
+        Current = 0,
+        Other = 1,
     }
 }

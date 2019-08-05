@@ -10,6 +10,7 @@ namespace CardGame
         static void Main(string[] args)
         {
             Bataille game = new Bataille();
+            game.Main();
             System.Console.In.ReadLine();
         }
     }
