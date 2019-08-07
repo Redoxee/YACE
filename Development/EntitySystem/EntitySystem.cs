@@ -87,6 +87,35 @@ namespace AMG.Entity
                 intersect.IntersectWith(EntitySystem.Select(tag).ids);
                 return new EntityCollection(intersect);
             }
+
+            public EntityCollection Intersect(IEnumerable<Entity> others)
+            {
+                HashSet<uint> intersect = new HashSet<uint>();
+                foreach (Entity other in others)
+                {
+                    if(this.ids.Contains(other.Id))
+                    {
+                        intersect.Add(other.Id);
+                    }
+                }
+
+                return new EntityCollection(intersect);
+            }
+
+            public override string ToString()
+            {
+                System.Text.StringBuilder stringBuilder = new System.Text.StringBuilder();
+
+                stringBuilder.Append("[");
+                foreach (uint id in this.ids)
+                {
+                    stringBuilder.Append(EntitySystem.allEntities[id]).Append(",");
+                }
+
+                stringBuilder.Append("]");
+
+                return stringBuilder.ToString();
+            }
         }
     }
 }

@@ -28,8 +28,32 @@
 
         public void AddTag(string tag, int value)
         {
-            this.AddTag(tag);
-            this.values[tag] = value;
+            if (!this.tags.Contains(tag))
+            {
+                this.AddTag(tag);
+                this.values[tag] = value;
+            }
+            else
+            {
+                if (this.values.ContainsKey(tag))
+                {
+                    this.values[tag] += value;
+                }
+                else
+                {
+                    this.values[tag] = value;
+                }
+            }
+        }
+
+        public int GetValue(string tag)
+        {
+            if (this.values.ContainsKey(tag))
+            {
+                return this.values[tag];
+            }
+
+            return int.MinValue;
         }
 
         public void RemoveTag(string tag)
@@ -55,6 +79,15 @@
                 }
                 stringBuilder.Append(",");
             }
+
+            return stringBuilder.ToString();
+        }
+
+        public override string ToString()
+        {
+            System.Text.StringBuilder stringBuilder = new System.Text.StringBuilder();
+
+            stringBuilder.Append("[").Append(this.GetTagsString()).Append("]");
 
             return stringBuilder.ToString();
         }

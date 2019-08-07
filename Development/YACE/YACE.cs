@@ -51,7 +51,7 @@
                     }
                 }
 
-                Context.GlobalRessource = new Ressource[globalRessourceCount];
+                Context.GlobalRessources = new Ressource[globalRessourceCount];
                 Context.Players[0].Ressources = new Ressource[playerRessourceCount];
                 Context.Players[1].Ressources = new Ressource[playerRessourceCount];
 
@@ -67,7 +67,7 @@
                     }
                     else
                     {
-                        Context.GlobalRessource[globalCounter] = new Ressource { Definition = ressourceDefinition, Value = ressourceDefinition.BaseValue };
+                        Context.GlobalRessources[globalCounter] = new Ressource { Definition = ressourceDefinition, Value = ressourceDefinition.BaseValue };
                         globalCounter++;
                     }
                 }
@@ -125,6 +125,7 @@
 
             if (zone == null)
             {
+                System.Console.WriteLine(string.Format("[Warning] unkown zone '{0}'", zoneName));
                 return;
             }
 
@@ -146,6 +147,20 @@
             card.Zone = zone;
         }
 
+        public void DrawCardToZone(string from, PlayerIndex fromIndex, string to, PlayerIndex toIndex)
+        {
+            Zone fromZone = this.GetZone(from, fromIndex);
+            if (fromZone.Cards.Count > 0)
+            {
+                this.SetCardToZone(fromZone.Cards[0], to, toIndex);
+            }
+        }
+
+        public void DrawCartToZone(string from, string to)
+        {
+            this.DrawCardToZone(from, PlayerIndex.Current, to, PlayerIndex.Current);
+        }
+
         public void ShuffleZone(string zoneName, PlayerIndex playerIndex = PlayerIndex.Current)
         {
             Zone zone = this.GetZone(zoneName, playerIndex);
@@ -162,7 +177,7 @@
             }
         }
 
-        private Zone GetZone(string zoneName, PlayerIndex playerIndex = PlayerIndex.Current)
+        public Zone GetZone(string zoneName, PlayerIndex playerIndex = PlayerIndex.Current)
         {
             Zone zone = null;
             if (this.globalZoneIndexes.ContainsKey(zoneName))
@@ -177,20 +192,52 @@
             return zone;
         }
 
-        public bool AlterCurrency(string currency, int delta)
+        public int GetRessourceValue(string ressource, PlayerIndex playerIndex = PlayerIndex.Current)
         {
-            if (globalRessourceIndexes.ContainsKey(currency))
+            if (this.globalRessourceIndexes.ContainsKey(ressource))
             {
-                Context.GlobalRessource[globalRessourceIndexes[currency]].Value = Context.GlobalRessource[globalRessourceIndexes[currency]].Value + delta;
-                return true;
+                return this.Context.GlobalRessources[this.globalRessourceIndexes[ressource]].Value;
             }
-            else if (playerRessourceIndexes.ContainsKey(currency))
+            else if (this.playerRessourceIndexes.ContainsKey(ressource))
             {
-                Context.Players[Context.CurrentPlayer].Ressources[playerRessourceIndexes[currency]].Value += delta;
-                return true;
+                int index = this.Context.GetPlayerIndex(playerIndex);
+                return this.Context.Players[index].Ressources[this.playerRessourceIndexes[ressource]].Value;
             }
 
-            return false;
+            System.Console.WriteLine(string.Format("Unkown ressource '{0}'", ressource));
+            return int.MinValue;
+        }
+
+        public void AlterRessource(string ressource, int delta)
+        {
+            if (globalRessourceIndexes.ContainsKey(ressource))
+            {
+                Context.GlobalRessources[globalRessourceIndexes[ressource]].Value = Context.GlobalRessources[globalRessourceIndexes[ressource]].Value + delta;
+                return;
+            }
+            else if (playerRessourceIndexes.ContainsKey(ressource))
+            {
+                Context.Players[Context.CurrentPlayer].Ressources[playerRessourceIndexes[ressource]].Value += delta;
+                return;
+            }
+
+            System.Console.WriteLine(string.Format("Unkown ressource '{0}'", ressource));
+        }
+
+        public void SetRessource(string ressource, int value, PlayerIndex playerIndex)
+        {
+            if (this.globalRessourceIndexes.ContainsKey(ressource))
+            {
+                this.Context.GlobalRessources[globalRessourceIndexes[ressource]].Value = value;
+                return;
+            }
+            else if (this.playerRessourceIndexes.ContainsKey(ressource))
+            {
+                int pi = this.Context.GetPlayerIndex(playerIndex);
+                this.Context.Players[pi].Ressources[this.playerRessourceIndexes[ressource]].Value = value;
+            }
+
+            System.Console.WriteLine(string.Format("Unkown ressource '{0}'", ressource));
         }
     }
 
@@ -239,11 +286,20 @@
     {
         public PlayerContext[] Players;
         public int CurrentPlayer;
-        public Ressource[] GlobalRessource;
+        public Ressource[] GlobalRessources;
         public Zone[] GlobalZones;
 
         public int GetPlayerIndex(PlayerIndex playerIndex)
         {
+            if (playerIndex == PlayerIndex.Player1)
+            {
+                return 0;
+            }
+            else if (playerIndex == PlayerIndex.Player2)
+            {
+                return 1;
+            }
+
             return (this.CurrentPlayer + (int)playerIndex) % 2;
         }
 
@@ -264,7 +320,7 @@
             }
 
             builder.Append("Ressources [");
-            foreach(Ressource ressource in GlobalRessource)
+            foreach(Ressource ressource in GlobalRessources)
             {
                 builder.Append(ressource.ToString()).Append(", ");
             }
@@ -350,5 +406,8 @@
     {
         Current = 0,
         Other = 1,
+
+        Player1 = 2,
+        Player2 = 3,
     }
 }
