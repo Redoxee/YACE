@@ -4,7 +4,6 @@
 
     public abstract class Entity
     {
-        private HashSet<string> tags;
         private Dictionary<string, int> values;
 
         public uint Id
@@ -15,34 +14,20 @@
 
         public Entity()
         {
-            this.tags = new HashSet<string>();
             this.values = new Dictionary<string, int>();
             EntitySystem.Register(this);
         }
 
-        public void AddTag(string tag)
+        public void AddTag(string tag, int value = int.MinValue)
         {
-            this.tags.Add(tag);
-            EntitySystem.RegisterTag(tag, this);
-        }
-
-        public void AddTag(string tag, int value)
-        {
-            if (!this.tags.Contains(tag))
+            if (this.values.ContainsKey(tag))
             {
-                this.AddTag(tag);
-                this.values[tag] = value;
+                this.values[tag] += value;
             }
             else
             {
-                if (this.values.ContainsKey(tag))
-                {
-                    this.values[tag] += value;
-                }
-                else
-                {
-                    this.values[tag] = value;
-                }
+                this.values[tag] = value;
+                EntitySystem.RegisterTag(tag, this);
             }
         }
 
@@ -58,24 +43,27 @@
 
         public void RemoveTag(string tag)
         {
-            this.tags.Remove(tag);
-            EntitySystem.UnregisterTag(tag, this);
+            if (this.values.ContainsKey(tag))
+            {
+                this.values.Remove(tag);
+                EntitySystem.UnregisterTag(tag, this);
+            }
         }
 
         public bool HasTag(string tag)
         {
-            return this.tags.Contains(tag);
+            return this.values.ContainsKey(tag);
         }
 
         public string GetTagsString()
         {
             System.Text.StringBuilder stringBuilder = new System.Text.StringBuilder();
-            foreach (string tag in this.tags)
+            foreach(var kvp in this.values)
             {
-                stringBuilder.Append(tag);
-                if (this.values.ContainsKey(tag))
+                stringBuilder.Append(kvp.Key);
+                if (kvp.Value != int.MinValue)
                 {
-                    stringBuilder.Append("= ").Append(this.values[tag]);
+                    stringBuilder.Append("= ").Append(kvp.Value);
                 }
                 stringBuilder.Append(",");
             }

@@ -114,7 +114,8 @@ namespace CardGame
                 CardInstance card = playerHand.Cards[0];
                 int value = card.GetValue("Value");
                 yace.AlterRessource("Score", multiplier * value);
-                yace.SetRessource("Multiplier", 0, PlayerIndex.Current);
+                //TODO reset ressource
+                yace.SetRessource("Multiplier", 1, PlayerIndex.Current);
             }
 
             yace.DrawCartToZone("PlayerHand", "DiscardPile");
@@ -126,11 +127,11 @@ namespace CardGame
             {
                 System.Console.WriteLine(string.Format("Player {0}, 'score' or 'multiply'", yace.Context.CurrentPlayer));
                 string command = System.Console.ReadLine().Trim().ToLower();
-                if (command== "score")
+                if (command== "s")
                 {
                     return PlayerAction.Score;
                 }
-                if (command == "multiply")
+                if (command == "m")
                 {
                     return PlayerAction.Multiply;
                 }
