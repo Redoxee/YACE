@@ -1,0 +1,15 @@
+- Define comunication objects
+- Implement comunication objects for entities
+- Implement Comunication Objects for context
+- Implement comunication objects for Batail state
+- Define PlayState object
+- Implement PlayState FSM
+- Define PlayState Schem for Batail
+- Define Order/Query architecture
+- Implement Orders
+- Implement Query
+- Implement a win form for batail state
+- Make batail playable through win form
+- Test "Bridge" lib to js
+- Test "Bridge" graphics
+- Make Batail playable in js
