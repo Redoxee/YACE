@@ -7,7 +7,7 @@ namespace CardGame
     {
         private YACE.YACE yace;
 
-        public void Main()
+        public Bataille()
         {
             YACE.YACEParameters parameters = new YACEParameters();
 
@@ -34,7 +34,7 @@ namespace CardGame
                 }
             };
 
-            parameters.ZoneDefinitions = new ZoneDefinition[] 
+            parameters.ZoneDefinitions = new ZoneDefinition[]
             {
                 new ZoneDefinition
                 {
@@ -63,8 +63,13 @@ namespace CardGame
                 yace.SetCardToZone(card, "MainDeck");
                 lastCard = card;
             }
-            yace.ShuffleZone("MainDeck");
 
+            yace.ShuffleZone("MainDeck");
+        }
+
+        public void Main()
+        {
+        
             Zone mainDeck = yace.GetZone("MainDeck");
             while (mainDeck.Cards.Count > 0)
             {
@@ -96,6 +101,33 @@ namespace CardGame
             System.Console.ReadLine();
         }
 
+        public void ProcessOrder(GameOrder order)
+        {
+            yace.DrawCardToZone("MainDeck", PlayerIndex.Current, "PlayerHand", PlayerIndex.Current);
+            Zone playerHand = yace.GetZone("PlayerHand");
+
+            if (order is Order_Score)
+            {
+                int multiplier = yace.GetRessourceValue("Multiplier");
+                CardInstance card = playerHand.Cards[0];
+                int value = card.GetValue("Value");
+                yace.AlterRessource("Score", multiplier * value);
+                yace.SetRessource("Multiplier", 1, PlayerIndex.Current);
+            }
+            else if (order is Order_Multiply)
+            {
+                yace.AlterRessource("Multiplier", 1);
+            }
+
+            yace.DrawCartToZone("PlayerHand", "DiscardPile");
+            yace.EndPlayerTurn();
+        }
+
+        public GameVue GetVue()
+        {
+            return this.yace.Context.GetVue();
+        }
+
         private void PlayOneTurn()
         {
             yace.DrawCardToZone("MainDeck", PlayerIndex.Current, "PlayerHand", PlayerIndex.Current);
@@ -118,7 +150,6 @@ namespace CardGame
                 yace.SetRessource("Multiplier", 1, PlayerIndex.Current);
             }
 
-            yace.DrawCartToZone("PlayerHand", "DiscardPile");
         }
 
         private PlayerAction ReadNextAction()
@@ -144,5 +175,17 @@ namespace CardGame
             Score = 1,
             Multiply = 2,
         }
+    }
+
+    abstract class GameOrder : Order
+    {
+    }
+
+    class Order_Score : GameOrder
+    {
+    }
+
+    class Order_Multiply : GameOrder
+    {
     }
 }

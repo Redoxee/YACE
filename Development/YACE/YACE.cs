@@ -334,12 +334,62 @@
             builder.Append("]");
             return builder.ToString();
         }
+
+        public GameVue GetVue()
+        {
+            GameVue gameVue = new GameVue();
+
+            gameVue.Ressources = new string[this.GlobalRessources.Length];
+            gameVue.RessourcesValues = new int[this.GlobalRessources.Length];
+            for (int ressourceIndex = 0; ressourceIndex < this.GlobalRessources.Length; ++ressourceIndex)
+            {
+                gameVue.Ressources[ressourceIndex] = this.GlobalRessources[ressourceIndex].Definition.Name;
+                gameVue.RessourcesValues[ressourceIndex] = this.GlobalRessources[ressourceIndex].Value;
+            }
+
+            gameVue.currentPlayer = this.CurrentPlayer;
+
+            gameVue.Zones = new GameVue.ZoneVue[this.GlobalZones.Length];
+            for (int zoneIndex = 0; zoneIndex < this.GlobalZones.Length; ++zoneIndex)
+            {
+                gameVue.Zones[zoneIndex] = this.GlobalZones[zoneIndex].GetVue();
+            }
+
+            gameVue.Players = new GameVue.PlayerVue[this.Players.Length];
+            for (int playerIndex = 0; playerIndex < this.Players.Length; ++playerIndex)
+            {
+                gameVue.Players[playerIndex] = this.Players[playerIndex].GetVue();
+            }
+
+            return gameVue;
+        }
     }
 
     public class PlayerContext
     {
         public Ressource[] Ressources;
         public Zone[] Zones;
+
+        public GameVue.PlayerVue GetVue()
+        {
+            GameVue.PlayerVue vue = new GameVue.PlayerVue();
+
+            vue.Ressources = new string[this.Ressources.Length];
+            vue.RessourcesValues = new int[this.Ressources.Length];
+            for (int ressourceIndex = 0; ressourceIndex < this.Ressources.Length; ++ressourceIndex)
+            {
+                vue.Ressources[ressourceIndex] = this.Ressources[ressourceIndex].Definition.Name;
+                vue.RessourcesValues[ressourceIndex] = this.Ressources[ressourceIndex].Value;
+            }
+
+            vue.Zones = new GameVue.ZoneVue[this.Zones.Length];
+            for (int zoneIndex = 0; zoneIndex < this.Zones.Length; ++zoneIndex)
+            {
+                vue.Zones[zoneIndex] = this.Zones[zoneIndex].GetVue();
+            }
+
+            return vue;
+        }
 
         public override string ToString()
         {
@@ -377,6 +427,27 @@
         {
             this.Definition = definition;
         }
+
+        public GameVue.CardVue GetVue()
+        {
+            GameVue.CardVue vue = new GameVue.CardVue();
+
+            vue.DefinitionName = this.Definition.Name;
+            int tagCount = this.Tags.Count;
+
+            vue.Tags = new string[tagCount];
+            vue.TagValues = new int[tagCount];
+
+            int tagIndex = 0;
+            foreach(var kvp in this.Tags)
+            {
+                vue.Tags[tagIndex] = kvp.Key;
+                vue.TagValues[tagIndex] = kvp.Value;
+                tagIndex++;
+            }
+
+            return vue;
+        }
     }
 
     public class Zone
@@ -384,6 +455,21 @@
         public string Name = string.Empty;
         public List<CardInstance> Cards = new List<CardInstance>();
         public ZoneDefinition ZoneDefinition;
+
+        public GameVue.ZoneVue GetVue()
+        {
+            GameVue.ZoneVue zoneVue = new GameVue.ZoneVue();
+            zoneVue.ZoneName = this.Name;
+
+            int cardCount = this.Cards.Count;
+            zoneVue.Cards = new GameVue.CardVue[cardCount];
+            for (int cardIndex = 0; cardIndex < cardCount; ++cardIndex)
+            {
+                zoneVue.Cards[cardIndex] = this.Cards[cardIndex].GetVue();
+            }
+
+            return zoneVue;
+        }
 
         public override string ToString()
         {
@@ -401,6 +487,44 @@
             return stringBuilder.ToString();
         }
     }
+
+    public struct GameVue
+    {
+        public string[] Ressources;
+        public int[] RessourcesValues;
+
+        public int currentPlayer;
+
+        public ZoneVue[] Zones;
+        public PlayerVue[] Players;
+
+        public struct PlayerVue
+        {
+            public string[] Tags;
+            public int[] TagValues;
+
+            public string[] Ressources;
+            public int[] RessourcesValues;
+
+            public ZoneVue[] Zones;
+        }
+
+        public struct ZoneVue
+        {
+            public string ZoneName;
+            public CardVue[] Cards;
+        }
+
+        public struct CardVue
+        {
+            public string[] Tags;
+            public int[] TagValues;
+
+            public string DefinitionName;
+        }
+    }
+
+
 
     public enum PlayerIndex : byte
     {

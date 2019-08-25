@@ -50,6 +50,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bataille.cs" />
+    <Compile Include="CommunicationLayer.cs" />
+    <Compile Include="GUI.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
