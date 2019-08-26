@@ -12,6 +12,8 @@ namespace CardGame
         public ComunicationLayer interop;
         System.Threading.Thread guiThread;
 
+        public bool NeedRefresh = false;
+
         public GUIHandler(ComunicationLayer comunicationLayer)
         {
             interop = comunicationLayer;
@@ -20,7 +22,7 @@ namespace CardGame
 
         public void Start()
         {
-             this.guiThread = new System.Threading.Thread(new System.Threading.ThreadStart(this.Main));
+            this.guiThread = new System.Threading.Thread(new System.Threading.ThreadStart(this.Main));
             this.guiThread.Start();
         }
 
@@ -28,6 +30,12 @@ namespace CardGame
         {
             this.gameForm.Show();
             Application.Run();
+        }
+
+        public void NotifyChanges()
+        {
+            this.NeedRefresh = true;
+            this.gameForm.Invalidate();
         }
     }
 
@@ -72,13 +80,53 @@ namespace CardGame
             string currentPlayerLabel = string.Format("Current player {0}" , gameVue.currentPlayer);
             formGraphics.DrawString(currentPlayerLabel, font, myBrush, 10, 10);
 
+            Point point = new Point(10,40);
+
+            this.PaintCard(gameVue.Zones[0].Cards[0], point, formGraphics, font);
+
             myBrush.Dispose();
             formGraphics.Dispose();
 
             this.DrawButton(scoreButton);
             this.DrawButton(multiplyButton);
-
         }
+
+        private void PaintCard(YACE.GameVue.CardVue cardVue, Point position, Graphics graphics, Font font)
+        {
+            System.Drawing.SolidBrush myBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Black);
+            System.Drawing.Pen pen = new Pen(myBrush, 2);
+
+            int cardWidth = 150;
+            int lineSpacing = 20;
+
+            int cardHeight = Math.Min(100, (cardVue.Tags.Length + 2) * lineSpacing);
+
+            graphics.DrawRectangle(pen, position.X, position.Y, cardWidth, cardHeight);
+
+            if (!string.IsNullOrEmpty(cardVue.DefinitionName))
+            {
+                graphics.DrawString(cardVue.DefinitionName, font, myBrush, position);
+                position.Y += lineSpacing;
+            }
+
+            for (int tagIndex = 0; tagIndex < cardVue.Tags.Length; ++tagIndex)
+            {
+
+                string label;
+                if (cardVue.TagValues[tagIndex] != int.MinValue)
+                {
+                    label = string.Format("{0} : {1}", cardVue.Tags[tagIndex], cardVue.TagValues[tagIndex]);
+                }
+                else
+                {
+                    label = string.Format("{0}", cardVue.Tags[tagIndex]);
+                }
+
+                graphics.DrawString(label, font, myBrush, position);
+                position.Y += lineSpacing;
+            }
+        }
+        
 
         private void DrawButton(Button button)
         {

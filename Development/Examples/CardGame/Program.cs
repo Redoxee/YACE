@@ -12,7 +12,10 @@
 
             while (!comunicationLayer.IsOver)
             {
-                comunicationLayer.ProcessOrders();
+                if (comunicationLayer.ProcessOrders())
+                {
+                    gui.NotifyChanges();
+                }
             }
 
             System.Console.WriteLine("Program End.");
