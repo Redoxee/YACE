@@ -1,0 +1,14 @@
+// Exemple of a game FSM
+State BeginTurn:
+	OnEvent BeginTurn GoTo PlayerTurn
+State PlayerTurn:
+	AvailableOrders:
+		CurrentPlayer PlayCard
+		CurrentPlayer Power
+		CurrentPlayer EndTurn
+	OnEvent EndTurn Goto EndTurn
+State EndTurn:
+	OnEvent EndTurn GoTo InterTurn
+State InterTurn:
+	OnEvent InterTurn SwitchCurrentPlayer
+	OnEvent InterTurn GoTo BeginTurn
