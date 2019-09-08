@@ -1,0 +1,10 @@
+Technical consideration for YACE
+I want to develope a usefull framework to make video card game (for now I'm focused on 1 V 1 or 1 V Computer)
+For personal reason, I wish not to use Unity (I'm doing Uniy at work).
+Since I Know a bit of C# I've started in C#
+I'd like the framework to be usable in a browser or in a server.
+I've found the Bridge techology that transpile C# to JS.
+Unfortunatly this tech require that the lib project should be compiled with there version of C# (can't have an external lib that is not compiled with it).
+This makes it akward if I want to switch between a full in client architecture to a server client architecture.
+The main reason I want a full client version is that it wouldbe easier to prototype/test game idea. espcialy if I want to give something to a non tech game designer.
+my best lead for now is to find a way to configure my visual solution so the use of bridge is handle by the configuration manager.

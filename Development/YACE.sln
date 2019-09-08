@@ -1,32 +1,52 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.645
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YACE", "YACE\YACE.csproj", "{DC999010-5988-43F2-88E0-5148710E9248}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntitySystem", "EntitySystem\EntitySystem.csproj", "{62D33E8F-9273-413D-A8C7-1ADC90840692}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardGame", "Examples\CardGame\CardGame.csproj", "{83F056BA-9BDF-4E86-8365-9FBE7E798AE5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestJS", "TestJS\TestJS.csproj", "{49008C36-7A50-4B31-AD93-DDDA0CE01CC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BatailleJS", "BatailleJS\BatailleJS.csproj", "{D0957917-574B-4A94-99B0-8DA754EB8100}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		BridgeEnable|Any CPU = BridgeEnable|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DC999010-5988-43F2-88E0-5148710E9248}.BridgeEnable|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC999010-5988-43F2-88E0-5148710E9248}.BridgeEnable|Any CPU.Build.0 = Debug|Any CPU
 		{DC999010-5988-43F2-88E0-5148710E9248}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DC999010-5988-43F2-88E0-5148710E9248}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC999010-5988-43F2-88E0-5148710E9248}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC999010-5988-43F2-88E0-5148710E9248}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62D33E8F-9273-413D-A8C7-1ADC90840692}.BridgeEnable|Any CPU.ActiveCfg = Debug|Any CPU
+		{62D33E8F-9273-413D-A8C7-1ADC90840692}.BridgeEnable|Any CPU.Build.0 = Debug|Any CPU
 		{62D33E8F-9273-413D-A8C7-1ADC90840692}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{62D33E8F-9273-413D-A8C7-1ADC90840692}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62D33E8F-9273-413D-A8C7-1ADC90840692}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{62D33E8F-9273-413D-A8C7-1ADC90840692}.Release|Any CPU.Build.0 = Release|Any CPU
-		{83F056BA-9BDF-4E86-8365-9FBE7E798AE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{83F056BA-9BDF-4E86-8365-9FBE7E798AE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{83F056BA-9BDF-4E86-8365-9FBE7E798AE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{83F056BA-9BDF-4E86-8365-9FBE7E798AE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49008C36-7A50-4B31-AD93-DDDA0CE01CC0}.BridgeEnable|Any CPU.ActiveCfg = BridgeEnabled|Any CPU
+		{49008C36-7A50-4B31-AD93-DDDA0CE01CC0}.BridgeEnable|Any CPU.Build.0 = BridgeEnabled|Any CPU
+		{49008C36-7A50-4B31-AD93-DDDA0CE01CC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49008C36-7A50-4B31-AD93-DDDA0CE01CC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49008C36-7A50-4B31-AD93-DDDA0CE01CC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49008C36-7A50-4B31-AD93-DDDA0CE01CC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0957917-574B-4A94-99B0-8DA754EB8100}.BridgeEnable|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0957917-574B-4A94-99B0-8DA754EB8100}.BridgeEnable|Any CPU.Build.0 = Debug|Any CPU
+		{D0957917-574B-4A94-99B0-8DA754EB8100}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0957917-574B-4A94-99B0-8DA754EB8100}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0957917-574B-4A94-99B0-8DA754EB8100}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0957917-574B-4A94-99B0-8DA754EB8100}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CBF43EB3-7F8E-4C7E-8C7A-382CAFC55192}
 	EndGlobalSection
 EndGlobal
