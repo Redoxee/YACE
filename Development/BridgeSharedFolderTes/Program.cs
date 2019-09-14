@@ -7,30 +7,48 @@ namespace BridgeSharedFolderTest
 
     class Program
     {
+        private static GameVue gameVue;
+
         static void Main(string[] args)
         {
             System.Console.WriteLine("Starting");
             CardGame.Bataille bataille = new CardGame.Bataille();
             System.Console.WriteLine("Started");
 
-            GameVue gameVue = bataille.GetVue();
+            Program.gameVue = bataille.GetVue();
 
             HTMLDivElement vueDiv = new HTMLDivElement();
-            HTMLDivElement cardDiv = new HTMLDivElement();
-            cardDiv.Style.Border = "5px";
-
-            HTMLLabelElement cardLabel = new HTMLLabelElement();
-            GameVue.CardVue firstCard = gameVue.Zones[0].Cards[0];
-
-            int cardValue = firstCard.TagValues[0];
-            cardLabel.TextContent = string.Format("Card : {0}", cardValue);
-
-            cardDiv.AppendChild(cardLabel);
-            vueDiv.AppendChild(cardDiv);
+            
+            HTMLDivElement playDiv = Program.DivPlayState();
+            vueDiv.AppendChild(playDiv);
 
             Document.Body.AppendChild(vueDiv);
 
             System.Console.WriteLine("Ended");
+        }
+
+        private static HTMLDivElement DivPlayState()
+        {
+            HTMLDivElement playDiv = new HTMLDivElement();
+
+            HTMLLabelElement PlayerOneScoreLabel = new HTMLLabelElement();
+            int playerScore = Program.gameVue.Players[0].GetRessource("Score");
+
+            PlayerOneScoreLabel.TextContent = string.Format("Player 1 : {0}", playerScore);
+            playDiv.AppendChild(PlayerOneScoreLabel);
+
+            return playDiv;
+        }
+
+        private HTMLDivElement GetCardDiv()
+        {
+            HTMLDivElement cardDiv = new HTMLDivElement();
+            cardDiv.Style.Border = "solid";
+            cardDiv.Style.BorderColor = "black";
+            cardDiv.Style.BorderWidth = "3px";
+            cardDiv.Style.Width = "150px";
+            cardDiv.Style.Height = "200px";
+            return cardDiv;
         }
     }
 }
