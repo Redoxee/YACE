@@ -235,6 +235,7 @@
             {
                 int pi = this.Context.GetPlayerIndex(playerIndex);
                 this.Context.Players[pi].Ressources[this.playerRessourceIndexes[ressource]].Value = value;
+                return;
             }
 
             System.Console.WriteLine(string.Format("Unkown ressource '{0}'", ressource));
