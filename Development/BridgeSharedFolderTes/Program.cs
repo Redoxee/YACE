@@ -34,12 +34,14 @@ namespace BridgeSharedFolderTest
             {
                 HTMLLabelElement PlayerOneScoreLabel = new HTMLLabelElement();
                 int playerOneScore = Program.gameVue.Players[0].GetRessource("Score");
-                PlayerOneScoreLabel.TextContent = string.Format("Player 1 : {0}", playerOneScore);
+                int playerOneMultiplier = Program.gameVue.Players[0].GetRessource("Multiplier");
+                PlayerOneScoreLabel.TextContent = string.Format("Player 1 : '{0}', Multiplier : '{1}'", playerOneScore, playerOneMultiplier);
                 playDiv.AppendChild(PlayerOneScoreLabel);
-
+                playDiv.AppendChild(new HTMLParagraphElement());
                 HTMLLabelElement playerTwoScoreLabel = new HTMLLabelElement();
                 int playerTwoScore = Program.gameVue.Players[1].GetRessource("Score");
-                playerTwoScoreLabel.TextContent = $"Player 2 : {playerTwoScore}'";
+                int playerTwoMultiplier = Program.gameVue.Players[1].GetRessource("Multiplier");
+                playerTwoScoreLabel.TextContent = $"Player 2 : {playerTwoScore}', Multiplier : '{playerTwoMultiplier}'";
                 playDiv.AppendChild(playerTwoScoreLabel);
 
                 if (Program.gameVue.Zones[0].Cards.Length > 0)
@@ -53,8 +55,13 @@ namespace BridgeSharedFolderTest
                     HTMLDivElement topCardDiv = Program.GetCardDiv(topCard);
                     deckDiv.AppendChild(topCardDiv);
 
+                    deckDiv.AppendChild(new HTMLParagraphElement());
+                    deckDiv.AppendChild(new HTMLLabelElement() { TextContent = $"'{Program.gameVue.Zones[0].Cards.Length}' Cards left in the deck" });
+
                     playDiv.AppendChild(deckDiv);
                 }
+
+                playDiv.AppendChild(new HTMLDivElement() { TextContent = string.Format("Current player {0}", Program.gameVue.currentPlayer + 1)});
             }
             else
             {
@@ -62,11 +69,12 @@ namespace BridgeSharedFolderTest
                 int playerOneScore = Program.gameVue.Players[0].GetRessource("Score");
                 PlayerOneScoreLabel.TextContent = string.Format("Player 1 : {0}", playerOneScore);
                 playDiv.AppendChild(PlayerOneScoreLabel);
-
+                playDiv.AppendChild(new HTMLParagraphElement());
                 HTMLLabelElement playerTwoScoreLabel = new HTMLLabelElement();
                 int playerTwoScore = Program.gameVue.Players[1].GetRessource("Score");
                 playerTwoScoreLabel.TextContent = $"Player 2 : {playerTwoScore}'";
                 playDiv.AppendChild(playerTwoScoreLabel);
+                playDiv.AppendChild(new HTMLParagraphElement());
 
                 string winnerMessage;
                 if (playerOneScore > playerTwoScore)
@@ -110,19 +118,22 @@ namespace BridgeSharedFolderTest
             HTMLDivElement playDiv = Program.DivPlayState();
             vueDiv.AppendChild(playDiv);
 
-            HTMLButtonElement bankButton = new HTMLButtonElement
-            {
-                TextContent = "Bank",
-                OnClick = (ev) => { Program.OnBankButtonCliked(); }
-            };
-            vueDiv.AppendChild(bankButton);
+            if(Program.gameVue.Zones[0].Cards.Length > 0)
+            { 
+                HTMLButtonElement bankButton = new HTMLButtonElement
+                {
+                    TextContent = "Bank",
+                    OnClick = (ev) => { Program.OnBankButtonCliked(); }
+                };
+                vueDiv.AppendChild(bankButton);
 
-            HTMLButtonElement multiplyButton = new HTMLButtonElement
-            {
-                TextContent = "Multiply",
-                OnClick = (ev) => { Program.OnMultiplyButtonClicked(); }
-            };
-            vueDiv.AppendChild(multiplyButton);
+                HTMLButtonElement multiplyButton = new HTMLButtonElement
+                {
+                    TextContent = "Multiply",
+                    OnClick = (ev) => { Program.OnMultiplyButtonClicked(); }
+                };
+                vueDiv.AppendChild(multiplyButton);
+            }
 
             if (Program.mainDiv.ChildElementCount > 0)
             {
