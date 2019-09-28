@@ -83,8 +83,8 @@ namespace CardGame
                 yace.EndPlayerTurn();
             }
 
-            int player1Score = yace.GetRessourceValue("Score", PlayerIndex.Player1);
-            int player2Score = yace.GetRessourceValue("Score", PlayerIndex.Player2);
+            int player1Score = yace.GetRessourceValue("Score", PlayerIndex.Player0);
+            int player2Score = yace.GetRessourceValue("Score", PlayerIndex.Player1);
             if (player1Score > player2Score)
             {
                 System.Console.WriteLine("Player 1 Won!");

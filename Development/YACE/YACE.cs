@@ -19,8 +19,6 @@
         {
             System.Diagnostics.Debug.Assert(parameters.ResourceDefinitions != null, "Provide at least one ressource");
 
-            
-
             Context = new Context
             {
                 Players = new PlayerContext[]
@@ -186,7 +184,7 @@
             }
             else if (this.playerZoneIndexes.ContainsKey(zoneName))
             {
-                zone = this.Context.Players[this.Context.GetPlayerIndex(playerIndex)].Zones[this.playerZoneIndexes[zoneName]];
+                zone = this.Context.Players[this.Context.ConvertPlayerIndex(playerIndex)].Zones[this.playerZoneIndexes[zoneName]];
             }
 
             return zone;
@@ -200,7 +198,7 @@
             }
             else if (this.playerRessourceIndexes.ContainsKey(ressource))
             {
-                int index = this.Context.GetPlayerIndex(playerIndex);
+                int index = this.Context.ConvertPlayerIndex(playerIndex);
                 return this.Context.Players[index].Ressources[this.playerRessourceIndexes[ressource]].Value;
             }
 
@@ -233,7 +231,7 @@
             }
             else if (this.playerRessourceIndexes.ContainsKey(ressource))
             {
-                int pi = this.Context.GetPlayerIndex(playerIndex);
+                int pi = this.Context.ConvertPlayerIndex(playerIndex);
                 this.Context.Players[pi].Ressources[this.playerRessourceIndexes[ressource]].Value = value;
                 return;
             }
@@ -290,18 +288,22 @@
         public Ressource[] GlobalRessources;
         public Zone[] GlobalZones;
 
-        public int GetPlayerIndex(PlayerIndex playerIndex)
+        public int ConvertPlayerIndex(PlayerIndex playerIndex)
         {
-            if (playerIndex == PlayerIndex.Player1)
+            if (playerIndex == PlayerIndex.Current)
             {
-                return 0;
+                return this.CurrentPlayer;
             }
-            else if (playerIndex == PlayerIndex.Player2)
+            else if (playerIndex == PlayerIndex.Other)
             {
-                return 1;
+                return ((this.CurrentPlayer + 1) % 2);
+            }
+            else if (playerIndex == PlayerIndex.All)
+            {
+                return -1;
             }
 
-            return (this.CurrentPlayer + (int)playerIndex) % 2;
+            return (int)playerIndex;
         }
 
         public override string ToString()
@@ -573,10 +575,11 @@
 
     public enum PlayerIndex : byte
     {
-        Current = 0,
-        Other = 1,
+        Player0 = 0,
+        Player1 = 1,
 
-        Player1 = 2,
-        Player2 = 3,
+        Current = 2,
+        Other = 3,
+        All = 4, 
     }
 }
