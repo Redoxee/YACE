@@ -7,7 +7,7 @@
     {
         public string Name;
         public bool IsPlayerBound;
-        public bool IsOredered;
+        public bool IsOrdered;
     }
 
     public class Zone
@@ -15,10 +15,11 @@
         public string Name = string.Empty;
         public List<CardInstance> Cards = new List<CardInstance>();
         public ZoneDefinition ZoneDefinition;
+        public PlayerIndex PlayerIndex = PlayerIndex.All;
 
         public GameVue.ZoneVue GetVue()
         {
-            GameVue.ZoneVue zoneVue = new GameVue.ZoneVue();
+            GameVue.ZoneVue zoneVue;
             zoneVue.ZoneName = this.Name;
 
             int cardCount = this.Cards.Count;

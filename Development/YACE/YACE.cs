@@ -16,6 +16,8 @@
         private readonly Dictionary<string, int> playerZoneIndexes = new Dictionary<string, int>();
         private readonly Dictionary<string, int> globalZoneIndexes = new Dictionary<string, int>();
 
+        private readonly Zone[] workingOneZoneArray = new Zone[1];
+        private readonly Zone[] workingTwoZoneArray = new Zone[2];
 
         public YACE(YACEParameters parameters)
         {
@@ -101,8 +103,8 @@
                 {
                     if (zoneDefinition.IsPlayerBound)
                     {
-                        Context.Players[0].Zones[playerCounter] = new Zone { Name = zoneDefinition.Name, ZoneDefinition = zoneDefinition };
-                        Context.Players[1].Zones[playerCounter] = new Zone { Name = zoneDefinition.Name, ZoneDefinition = zoneDefinition };
+                        Context.Players[0].Zones[playerCounter] = new Zone { Name = zoneDefinition.Name, ZoneDefinition = zoneDefinition , PlayerIndex = PlayerIndex.Player0};
+                        Context.Players[1].Zones[playerCounter] = new Zone { Name = zoneDefinition.Name, ZoneDefinition = zoneDefinition , PlayerIndex = PlayerIndex.Player1};
                         playerCounter++;
                     }
                     else
@@ -126,7 +128,9 @@
 
         public void SetCardToZone(CardInstance card, string zoneName, PlayerIndex playerIndex = PlayerIndex.Current)
         {
-            Zone zone = this.GetZone(zoneName, playerIndex);
+            Zone[] zones = this.GetZones(zoneName, playerIndex);
+            System.Diagnostics.Debug.Assert(zones.Length == 1);
+            Zone zone = zones[0];
 
             if (zone == null)
             {
@@ -154,7 +158,10 @@
 
         public void DrawCardToZone(string from, PlayerIndex fromIndex, string to, PlayerIndex toIndex)
         {
-            Zone fromZone = this.GetZone(from, fromIndex);
+            Zone[] zones = this.GetZones(from, fromIndex);
+            System.Diagnostics.Debug.Assert(zones.Length == 1);
+            Zone fromZone = zones[0];
+
             if (fromZone.Cards.Count > 0)
             {
                 this.SetCardToZone(fromZone.Cards[0], to, toIndex);
@@ -168,33 +175,56 @@
 
         public void ShuffleZone(string zoneName, PlayerIndex playerIndex = PlayerIndex.Current)
         {
-            Zone zone = this.GetZone(zoneName, playerIndex);
-            int nbCards = zone.Cards.Count;
-
-            Random random = new Random();
-
-            for (int i = 0; i < nbCards - 1; ++i)
+            Zone[] zones = this.GetZones(zoneName, playerIndex);
+            for (int zoneIndex = 0; zoneIndex < zones.Length; ++zoneIndex)
             {
-                int newIndex = random.Next(i, nbCards);
-                CardInstance swap = zone.Cards[newIndex];
-                zone.Cards[newIndex] = zone.Cards[i];
-                zone.Cards[i] = swap;
+                Zone zone = zones[zoneIndex];
+
+                int nbCards = zone.Cards.Count;
+                Random random = new Random();
+
+                for (int i = 0; i < nbCards - 1; ++i)
+                {
+                    int newIndex = random.Next(i, nbCards);
+                    CardInstance swap = zone.Cards[newIndex];
+                    zone.Cards[newIndex] = zone.Cards[i];
+                    zone.Cards[i] = swap;
+                }
             }
         }
 
-        public Zone GetZone(string zoneName, PlayerIndex playerIndex = PlayerIndex.Current)
+        public Zone[] GetZones(string zoneName, PlayerIndex playerIndex = PlayerIndex.Current)
         {
-            Zone zone = null;
             if (this.globalZoneIndexes.ContainsKey(zoneName))
             {
-                zone = this.Context.GlobalZones[this.globalZoneIndexes[zoneName]];
+                this.workingOneZoneArray[0] = this.Context.GlobalZones[this.globalZoneIndexes[zoneName]];
+                return this.workingOneZoneArray;
             }
             else if (this.playerZoneIndexes.ContainsKey(zoneName))
             {
-                zone = this.Context.Players[this.Context.ConvertPlayerIndex(playerIndex)].Zones[this.playerZoneIndexes[zoneName]];
+                int zoneIndex = this.playerZoneIndexes[zoneName];
+                int index = this.Context.ConvertPlayerIndex(playerIndex);
+                if (index > -1)
+                {
+                    this.workingOneZoneArray[0] = this.Context.Players[index].Zones[zoneIndex];
+                    return this.workingOneZoneArray;
+                }
+                else
+                {
+                    this.workingTwoZoneArray[0] = this.Context.Players[0].Zones[zoneIndex];
+                    this.workingTwoZoneArray[1] = this.Context.Players[1].Zones[zoneIndex];
+                    return this.workingTwoZoneArray;
+                }
             }
 
-            return zone;
+            return null;
+        }
+
+        public Zone GetSingleZone(string zoneName, PlayerIndex playerIndex = PlayerIndex.Current)
+        {
+            Zone[] zones = this.GetZones(zoneName, playerIndex);
+            System.Diagnostics.Debug.Assert(zones.Length == 1);
+            return zones[0];
         }
 
         public int GetRessourceValue(string ressource, PlayerIndex playerIndex = PlayerIndex.Current)

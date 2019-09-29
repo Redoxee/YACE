@@ -69,7 +69,7 @@
 
         public GameVue GetVue()
         {
-            GameVue gameVue = new GameVue();
+            GameVue gameVue;
 
             gameVue.Ressources = new string[this.GlobalRessources.Length];
             gameVue.RessourcesValues = new int[this.GlobalRessources.Length];

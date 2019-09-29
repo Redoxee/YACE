@@ -40,13 +40,13 @@ namespace CardGame
                 {
                     Name = "MainDeck",
                     IsPlayerBound = false,
-                    IsOredered = false,
+                    IsOrdered = false,
                 },
                 new ZoneDefinition
                 {
                     Name = "PlayerHand",
                     IsPlayerBound = true,
-                    IsOredered = false,
+                    IsOrdered = false,
                 },
                 new ZoneDefinition
                 {

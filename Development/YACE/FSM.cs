@@ -12,11 +12,11 @@
         private readonly string[] allStates;
         private string currentState;
 
-        private List<StateWatcher> watchers;
-        private Dictionary<string, List<StateWatcher>> watcherByState;
-        private Dictionary<WatcherAction, string> stateByAction;
+        private readonly List<StateWatcher> watchers;
+        private readonly Dictionary<string, List<StateWatcher>> watcherByState;
+        private readonly Dictionary<WatcherAction, string> stateByAction;
 
-        private YACE yaceInstance;
+        private readonly YACE yaceInstance;
 
         internal FiniteStateMachine(StateDefinition[] allStates, StateDefinition initialState, YACE yace)
         {

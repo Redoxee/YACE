@@ -10,7 +10,7 @@
         public bool IsPlayerBound;
         public bool ConsumeOnUse;
 
-        public string[] ResetOnPhases;
+        public string[] ResetOnState;
     }
 
     public class Ressource

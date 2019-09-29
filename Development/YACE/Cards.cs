@@ -3,7 +3,7 @@
     using System.Collections.Generic;
     using AMG.Entity;
 
-    public struct CardDefinition
+    public class CardDefinition
     {
         public string Name;
     }
@@ -20,7 +20,7 @@
 
         public GameVue.CardVue GetVue()
         {
-            GameVue.CardVue vue = new GameVue.CardVue();
+            GameVue.CardVue vue;
 
             vue.DefinitionName = this.Definition.Name;
             int tagCount = this.Tags.Count;

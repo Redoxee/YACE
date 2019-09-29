@@ -40,13 +40,13 @@ namespace CardGame
                 {
                     Name = "MainDeck",
                     IsPlayerBound = false,
-                    IsOredered = false,
+                    IsOrdered = false,
                 },
                 new ZoneDefinition
                 {
                     Name = "PlayerHand",
                     IsPlayerBound = true,
-                    IsOredered = false,
+                    IsOrdered = false,
                 },
                 new ZoneDefinition
                 {
@@ -70,7 +70,7 @@ namespace CardGame
         public void Main()
         {
         
-            Zone mainDeck = yace.GetZone("MainDeck");
+            Zone mainDeck = yace.GetSingleZone("MainDeck");
             while (mainDeck.Cards.Count > 0)
             {
                 int currentPlayer = yace.GetRessourceValue("Score", PlayerIndex.Current);
@@ -104,7 +104,7 @@ namespace CardGame
         public void ProcessOrder(GameOrder order)
         {
             yace.DrawCardToZone("MainDeck", PlayerIndex.Current, "PlayerHand", PlayerIndex.Current);
-            Zone playerHand = yace.GetZone("PlayerHand");
+            Zone playerHand = yace.GetSingleZone("PlayerHand");
 
             if (order is Order_Score)
             {
@@ -131,7 +131,7 @@ namespace CardGame
         private void PlayOneTurn()
         {
             yace.DrawCardToZone("MainDeck", PlayerIndex.Current, "PlayerHand", PlayerIndex.Current);
-            Zone playerHand = yace.GetZone("PlayerHand");
+            Zone playerHand = yace.GetSingleZone("PlayerHand");
 
             System.Console.WriteLine(playerHand.ToString());
             PlayerAction playerAction = ReadNextAction();

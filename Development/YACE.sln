@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardGame01", "CardGame01\Ca
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JSGame01", "JSGame01\JSGame01.csproj", "{8EC8C641-D486-44EE-853C-F176A64D7108}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardGame02", "CardGame02\CardGame02.csproj", "{B30D5845-E3AD-46C6-8703-0890704D3C76}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleGame02", "ConsoleGame02\ConsoleGame02.csproj", "{237E31F7-0E32-4778-BAB2-B7EBB460A954}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{8EC8C641-D486-44EE-853C-F176A64D7108}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8EC8C641-D486-44EE-853C-F176A64D7108}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8EC8C641-D486-44EE-853C-F176A64D7108}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B30D5845-E3AD-46C6-8703-0890704D3C76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B30D5845-E3AD-46C6-8703-0890704D3C76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B30D5845-E3AD-46C6-8703-0890704D3C76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B30D5845-E3AD-46C6-8703-0890704D3C76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{237E31F7-0E32-4778-BAB2-B7EBB460A954}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{237E31F7-0E32-4778-BAB2-B7EBB460A954}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{237E31F7-0E32-4778-BAB2-B7EBB460A954}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{237E31F7-0E32-4778-BAB2-B7EBB460A954}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
