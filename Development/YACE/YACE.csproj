@@ -46,15 +46,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cards.cs" />
+    <Compile Include="Context.cs" />
     <Compile Include="ContextPath.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\EntityCollection.cs" />
     <Compile Include="Entities\EntitySystem.cs" />
     <Compile Include="FSM.cs" />
+    <Compile Include="GameVue.cs" />
     <Compile Include="IRessourceHolder.cs" />
     <Compile Include="ITaggable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources.cs" />
     <Compile Include="YACE.cs" />
+    <Compile Include="Zones.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
