@@ -57,8 +57,8 @@
     <Compile Include="..\YACE\*.cs">
       <Link>YaceLink\%(FileName)</Link>
     </Compile>
-    <Compile Include="..\EntitySystem\*.cs">
-      <Link>ECSLink\%(FileName)</Link>
+    <Compile Include="..\YACE\Entities\*.cs">
+      <Link>Entities\%(FileName)</Link>
     </Compile>
     <Compile Include="Bataille.cs" />
     <Compile Include="Program.cs" />
