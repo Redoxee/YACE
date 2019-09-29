@@ -3,15 +3,19 @@
     using System;
     using System.Collections.Generic;
 
+    using FSM;
+
     public class YACE
     {
         public Context Context;
+        public readonly FiniteStateMachine StateMachine;
 
         private readonly Dictionary<string, int> globalRessourceIndexes = new Dictionary<string, int>();
         private readonly Dictionary<string, int> playerRessourceIndexes = new Dictionary<string, int>();
 
         private readonly Dictionary<string, int> playerZoneIndexes = new Dictionary<string, int>();
         private readonly Dictionary<string, int> globalZoneIndexes = new Dictionary<string, int>();
+
 
         public YACE(YACEParameters parameters)
         {
@@ -107,6 +111,11 @@
                         globalCounter++;
                     }
                 }
+            }
+
+            if (parameters.States != null)
+            {
+                this.StateMachine = new FiniteStateMachine(parameters.States, parameters.InitialState, this);
             }
         }
 
@@ -242,5 +251,8 @@
     {
         public ResourceDefinition[] ResourceDefinitions;
         public ZoneDefinition[] ZoneDefinitions;
+
+        public StateDefinition[] States;
+        public StateDefinition InitialState;
     }
 }

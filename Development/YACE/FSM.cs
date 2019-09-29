@@ -2,7 +2,12 @@
 {
     using System.Collections.Generic;
 
-    public class FSM
+    public struct StateDefinition
+    {
+        public string Name;
+    }
+
+    public class FiniteStateMachine
     {
         private readonly string[] allStates;
         private string currentState;
@@ -13,16 +18,22 @@
 
         private YACE yaceInstance;
 
-        internal FSM(string[] allStates, string initialState, YACE yace)
+        internal FiniteStateMachine(StateDefinition[] allStates, StateDefinition initialState, YACE yace)
         {
-            this.allStates = allStates;
+            string[] states = new string[allStates.Length];
+            for (int index = 0; index < states.Length; ++index)
+            {
+                states[index] = allStates[index].Name;
+            }
+
+            this.allStates = states;
             System.Diagnostics.Debug.Assert(System.Array.IndexOf(allStates, initialState) > -1);
-            this.currentState = initialState;
+            this.currentState = initialState.Name;
             this.watchers = new List<StateWatcher>();
             this.watcherByState = new Dictionary<string, List<StateWatcher>>();
             for (int index = 0; index < allStates.Length; ++index)
             {
-                this.watcherByState[allStates[index]] = new List<StateWatcher>();
+                this.watcherByState[states[index]] = new List<StateWatcher>();
             }
 
             this.stateByAction = new Dictionary<WatcherAction, string>();

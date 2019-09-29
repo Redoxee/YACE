@@ -3,9 +3,9 @@
     using System.Collections.Generic;
     using AMG.Entity;
 
-    public class CardDefinition
+    public struct CardDefinition
     {
-        public string Name = string.Empty;
+        public string Name;
     }
 
     public class CardInstance : Entity
