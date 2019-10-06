@@ -6,6 +6,29 @@
 
     public class Game
     {
+        public struct Names
+        {
+            public struct Ressources
+            {
+                public const string VictoryPoints = "VictoryPoints";
+                public const string PlayerAction = "PlayerAction";
+            }
+
+            public struct Zones
+            {
+                public const string GameDeck = "GameDeck";
+                public const string GameShop = "GameShop";
+                public const string PlayerBoard = "PlayerBoard";
+                public const string PlayerDiscard = "PlayerDiscard";
+            }
+
+            public struct States
+            {
+                public const string PlayerTurn = "PlayerTurn";
+                public const string InterTurn = "InterTrurn";
+            }
+        }
+
         YACE Yace;
 
         public void Initialize()
@@ -15,7 +38,7 @@
             {
                 new ResourceDefinition
                 {
-                    Name = "VictoryPoints",
+                    Name = Names.Ressources.VictoryPoints,
                     MinValue = 0,
                     BaseValue = 0,
                     IsPlayerBound = true,
@@ -23,7 +46,7 @@
 
                 new ResourceDefinition
                 {
-                    Name = "PlayerAction",
+                    Name = Names.Ressources.PlayerAction,
                     BaseValue = 2,
                     MinValue = 0,
                     IsPlayerBound = true,
@@ -35,28 +58,28 @@
             {
                 new ZoneDefinition
                 {
-                    Name = "GameDeck",
+                    Name = Names.Zones.GameDeck,
                     IsPlayerBound = false,
                     IsOrdered = false,
                 },
 
                 new ZoneDefinition
                 {
-                    Name = "GameShop",
+                    Name = Names.Zones.GameShop,
                     IsPlayerBound = false,
                     IsOrdered = true,
                 },
 
                 new ZoneDefinition
                 {
-                    Name = "PlayerHand",
+                    Name = Names.Zones.PlayerBoard,
                     IsPlayerBound = true,
                     IsOrdered = true, 
                 },
 
                 new ZoneDefinition
                 {
-                    Name = "PlayerDiscard",
+                    Name = Names.Zones.PlayerDiscard,
                     IsPlayerBound = true,
                     IsOrdered = false,
                 },
@@ -66,12 +89,12 @@
             {
                 new StateDefinition()
                 {
-                    Name = "PlayState",
+                    Name = Names.States.PlayerTurn,
                 },
 
                 new StateDefinition()
                 {
-                    Name = "InterPlay",
+                    Name = Names.States.InterTurn,
                 },
             };
 
@@ -117,8 +140,6 @@
                 PlayerIndex = PlayerIndex.Other,
                 PointDelta = -1,
             };
-
-            // - At the start of YOUR Turn gives you One Action point
         }
 
         internal abstract class SpecializedCardDefinition : CardDefinition
