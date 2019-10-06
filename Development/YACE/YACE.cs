@@ -156,6 +156,13 @@
             card.Zone = zone;
         }
 
+        public CardInstance InstanciateCardToZone(CardDefinition cardDefinition, string zoneName, PlayerIndex playerIndex)
+        {
+            CardInstance card = new CardInstance(cardDefinition);
+            this.SetCardToZone(card, zoneName, playerIndex);
+            return card;
+        }
+
         public void DrawCardToZone(string from, PlayerIndex fromIndex, string to, PlayerIndex toIndex)
         {
             Zone[] zones = this.GetZones(from, fromIndex);
@@ -243,7 +250,7 @@
             return int.MinValue;
         }
 
-        public void AlterRessource(string ressource, int delta)
+        public void AlterRessource(string ressource, int delta, PlayerIndex playerIndex = PlayerIndex.Current)
         {
             if (globalRessourceIndexes.ContainsKey(ressource))
             {
@@ -252,7 +259,9 @@
             }
             else if (playerRessourceIndexes.ContainsKey(ressource))
             {
-                Context.Players[Context.CurrentPlayer].Ressources[playerRessourceIndexes[ressource]].Value += delta;
+                int pi = this.Context.ConvertPlayerIndex(playerIndex);
+
+                Context.Players[pi].Ressources[playerRessourceIndexes[ressource]].Value += delta;
                 return;
             }
 

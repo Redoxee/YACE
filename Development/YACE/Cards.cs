@@ -6,6 +6,7 @@
     public class CardDefinition
     {
         public string Name;
+        public TagDefinition[] BaseTags;
     }
 
     public class CardInstance : Entity
@@ -16,6 +17,14 @@
         public CardInstance(CardDefinition definition)
         {
             this.Definition = definition;
+
+            if (definition.BaseTags != null)
+            {
+                for (int tagIndex = 0; tagIndex < definition.BaseTags.Length; ++tagIndex)
+                {
+                    this.AddTag(definition.BaseTags[tagIndex].Tag, definition.BaseTags[tagIndex].BaseValue);
+                }
+            }
         }
 
         public GameVue.CardVue GetVue()
