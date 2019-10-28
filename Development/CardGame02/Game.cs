@@ -103,7 +103,7 @@
             this.Yace = new YACE(parameters);
             // Cards
             // - At the end of A turn gives you 1 victory point
-            SpecializedCardDefinition SelfPointGainerDef = new AddPointCardDefinition()
+            SpecializedCardDefinition SelfPointGainerDef = new AddPointCardDefinition(this.Yace)
             {
                 Name = "SelfPointGainer",
                 PointDelta = 1,
@@ -111,14 +111,14 @@
 
             // - At the Start of YOUR turn gives you 1 point
 
-            SpecializedCardDefinition AllAroundPointGainerDef = new AddPointCardDefinition()
+            SpecializedCardDefinition AllAroundPointGainerDef = new AddPointCardDefinition(this.Yace)
             {
                 Name = "AllAroundPointGainer",
                 PointDelta = 1,
             };
 
             // - At the start of YOUR turn gives you 5 point and discard YOUR board
-            SpecializedCardDefinition PointGainerFlush = new AddPointAndFlushBoard()
+            SpecializedCardDefinition PointGainerFlush = new AddPointAndFlushBoard(this.Yace)
             {
                 Name = "PointGainAndFlusher",
                 PointDelta = 5,
@@ -127,14 +127,14 @@
 
             // - At the end of A turn Discrad THE board
 
-            SpecializedCardDefinition FlushBoarder = new FlushBoardCard()
+            SpecializedCardDefinition FlushBoarder = new FlushBoardCard(this.Yace)
             {
                 Name = "BoardFlusher",
                 BoardToFlush = PlayerIndex.All,
             };
 
             // - At the start of OPONENT turn remove him 1 point
-            SpecializedCardDefinition PointRemoverDef = new AddPointCardDefinition()
+            SpecializedCardDefinition PointRemoverDef = new AddPointCardDefinition(this.Yace)
             {
                 Name = "PointRemover",
                 PlayerIndex = PlayerIndex.Other,
@@ -142,17 +142,32 @@
             };
         }
 
+        internal void PlayCard(CardInstance card)
+        {
+            this.Yace.SetCardToZone(card, Names.Zones.PlayerBoard, PlayerIndex.Current);
+            SpecializedCardDefinition cardDef = card.Definition as SpecializedCardDefinition;
+            Yace.StateMachine.RegisterWatcher(Names.States.PlayerTurn, PlayerIndex.Current, cardDef.OnPlayerTurn);
+            Yace.StateMachine.RegisterWatcher(Names.States.InterTurn, PlayerIndex.All, cardDef.OnInterPlay);
+        }
+
         internal abstract class SpecializedCardDefinition : CardDefinition
         {
-            public virtual void CardActionOnPlay(YACE yace)
+            protected YACE Yace;
+
+            public SpecializedCardDefinition(YACE yace)
+            {
+                this.Yace = yace;
+            }
+
+            public virtual void CardActionOnPlay()
             {
             }
 
-            public virtual void OnPlayerTurn(YACE yace)
+            public virtual void OnPlayerTurn()
             {
             }
 
-            public virtual void OnInterPlay(YACE yace)
+            public virtual void OnInterPlay()
             {
             }
         }
@@ -162,9 +177,11 @@
             public int PointDelta = 1;
             public PlayerIndex PlayerIndex = PlayerIndex.Current;
 
-            public override void CardActionOnPlay(YACE yace)
+            public AddPointCardDefinition(YACE yace) : base(yace) { }
+
+            public override void CardActionOnPlay()
             {
-                yace.AlterRessource("VictoryPoints", this.PointDelta, this.PlayerIndex);
+                this.Yace.AlterRessource("VictoryPoints", this.PointDelta, this.PlayerIndex);
             }
         }
 
@@ -172,18 +189,21 @@
         {
             public PlayerIndex BoardToFlush = PlayerIndex.Current;
 
-            public override void CardActionOnPlay(YACE yace)
-            {
-                base.CardActionOnPlay(yace);
+            public AddPointAndFlushBoard(YACE yace) : base(yace) { }
 
-                Zone[] zones = yace.GetZones("PlayerHand", this.BoardToFlush);
+
+            public override void CardActionOnPlay()
+            {
+                base.CardActionOnPlay();
+
+                Zone[] zones = this.Yace.GetZones("PlayerHand", this.BoardToFlush);
                 for (int zoneIndex = 0; zoneIndex < zones.Length; ++zoneIndex)
                 {
                     Zone zone = zones[zoneIndex];
 
                     for (int cardIndex = zone.Cards.Count - 1; cardIndex >= 0; --cardIndex)
                     {
-                        yace.SetCardToZone(zone.Cards[cardIndex], "PlayerDiscard", zone.PlayerIndex);
+                        this.Yace.SetCardToZone(zone.Cards[cardIndex], "PlayerDiscard", zone.PlayerIndex);
                     }
                 }
             }
@@ -193,18 +213,22 @@
         {
             public PlayerIndex BoardToFlush = PlayerIndex.Current;
 
-            public override void OnInterPlay(YACE yace)
+            public FlushBoardCard(YACE yace) : base(yace)
             {
-                base.OnInterPlay(yace);
+            }
 
-                Zone[] zones = yace.GetZones("PlayerHand", this.BoardToFlush);
+            public override void OnInterPlay()
+            {
+                base.OnInterPlay();
+
+                Zone[] zones = this.Yace.GetZones("PlayerHand", this.BoardToFlush);
                 for (int zoneIndex = 0; zoneIndex < zones.Length; ++zoneIndex)
                 {
                     Zone zone = zones[zoneIndex];
 
                     for (int cardIndex = zone.Cards.Count - 1; cardIndex >= 0; --cardIndex)
                     {
-                        yace.SetCardToZone(zone.Cards[cardIndex], "PlayerDiscard", zone.PlayerIndex);
+                        this.Yace.SetCardToZone(zone.Cards[cardIndex], "PlayerDiscard", zone.PlayerIndex);
                     }
                 }
             }
